@@ -1,9 +1,12 @@
 package main
 
 import (
+	"neopets/common"
 	"neopets/controllers"
 	"net/http"
 )
+
+const NeoPriceDb = 1
 
 func StartServer() {
 	http.HandleFunc("/price", controllers.PriceWizard)
@@ -11,5 +14,7 @@ func StartServer() {
 }
 
 func main() {
+	rdb := &common.Redis{Addr: "localhost:6379", Password: "", Db: NeoPriceDb}
+	rdb.Connect()
 	StartServer()
 }
