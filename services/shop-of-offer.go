@@ -4,6 +4,10 @@ import (
 	"log"
 	"neopets/common"
 	"net/http"
+	"regexp"
+	"strings"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 const ShopOfOffer = "http://www.neopets.com/shop_of_offers.phtml?slorg_payout=yes"
@@ -18,6 +22,12 @@ func GetShopOfOffer() {
 	}
 	defer res.Body.Close()
 
-	// TODO: check if get successfully and show how much np to get
-	log.Print("We got ? NP")
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	text := strings.TrimSpace(doc.Find("#content > table > tbody > tr > td.content > table > tbody").First().Text())
+	re := regexp.MustCompile(`\d+ Neopoints`)
+
+	log.Print("Got " + string(re.Find([]byte(text))))
 }

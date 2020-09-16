@@ -5,6 +5,8 @@ import (
 	"neopets/common"
 	"net/http"
 	"strings"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 const GrundoGift = "http://www.neopets.com/faerieland/tdmbgpop.phtml"
@@ -19,6 +21,11 @@ func GetMagicBlueGrundoGift() {
 	}
 	defer res.Body.Close()
 
-	// TODO: check if get successfully and show gift
-	log.Print("We got ...")
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	text := strings.TrimSpace(doc.Find("#content > table > tbody > tr > td.content > div[align=center] > b").First().Text())
+
+	log.Print("Got " + text)
 }
