@@ -3,14 +3,14 @@ package main
 import (
 	"neopets/common"
 	"neopets/controllers"
-	"net/http"
 )
 
 const NeoPriceDb = 1
 
 func StartServer() {
-	http.HandleFunc("/price", controllers.PriceWizard)
-	http.ListenAndServe(":8090", nil)
+	server := common.WebServer{Host: "", Port: 8090}
+	server.Get("/price", controllers.PriceWizard)
+	server.Start(nil)
 }
 
 func main() {
