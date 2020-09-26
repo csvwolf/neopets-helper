@@ -18,7 +18,7 @@ type BlueGrundoGift struct {
 /**
 Once a day to get magic blue grundo's gift
 */
-func GetMagicBlueGrundoGift(session string) (string, error) {
+func GetMagicBlueGrundoGift(session string, resultChan chan string, errorChan chan error) {
 	res, err := common.Got("POST", GrundoGift, strings.NewReader("talkto=1"), []*http.Cookie{
 		{
 			Name:   "neologin",
@@ -27,16 +27,19 @@ func GetMagicBlueGrundoGift(session string) (string, error) {
 		},
 	})
 	if err != nil {
-		return "", err
+		errorChan <- err
+		return
 	}
 	defer res.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		return "", err
+		errorChan <- err
+		return
 	}
 	text := strings.TrimSpace(doc.Find("#content > table > tbody > tr > td.content > div[align=center] > b").First().Text())
 
 	log.Print("Got " + text)
-	return text, nil
+
+	resultChan <- text
 }
