@@ -3,6 +3,7 @@ package main
 import (
 	"neopets/common"
 	"neopets/controllers"
+	"neopets/controllers/daily"
 	"neopets/middlewares"
 )
 
@@ -12,6 +13,7 @@ func StartServer() {
 	server := common.WebServer{Host: "", Port: 8090}
 	server.Use(middlewares.Json)
 	server.Get("/price", controllers.PriceWizard)
+	server.Post("/daily/grundo", daily.MagicBlueGrundo)
 	server.Start(nil)
 }
 
