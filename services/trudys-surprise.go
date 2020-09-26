@@ -12,7 +12,7 @@ import (
 const TrudysSurpriseURL = "http://www.neopets.com/trudydaily/ajax/claimprize.php"
 const TrudysSurpriseAction = "beginroll"
 
-func GetTrudysSurprise() {
+func GetTrudysSurprise() string {
 	data := url.Values{}
 	data.Set("action", TrudysSurpriseAction)
 	res, err := common.Got(http.MethodPost, TrudysSurpriseURL, strings.NewReader(data.Encode()), []*http.Cookie{})
@@ -28,4 +28,6 @@ func GetTrudysSurprise() {
 	}
 	bodyString := string(bodyBytes)
 	log.Print(bodyString)
+
+	return bodyString
 }
