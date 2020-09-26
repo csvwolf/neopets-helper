@@ -11,21 +11,32 @@ import (
 
 const GrundoGift = "http://www.neopets.com/faerieland/tdmbgpop.phtml"
 
+type BlueGrundoGift struct {
+	Gift string `json:"gift"`
+}
+
 /**
 Once a day to get magic blue grundo's gift
 */
-func GetMagicBlueGrundoGift() {
-	res, err := common.Got("POST", GrundoGift, strings.NewReader("talkto=1"), []*http.Cookie{})
+func GetMagicBlueGrundoGift(session string) (string, error) {
+	res, err := common.Got("POST", GrundoGift, strings.NewReader("talkto=1"), []*http.Cookie{
+		{
+			Name:   "neologin",
+			Value:  session,
+			Domain: ".neopets.com",
+		},
+	})
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	defer res.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	text := strings.TrimSpace(doc.Find("#content > table > tbody > tr > td.content > div[align=center] > b").First().Text())
 
 	log.Print("Got " + text)
+	return text, nil
 }

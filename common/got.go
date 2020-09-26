@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 )
 
 func Got(method string, url string, body io.Reader, cookies []*http.Cookie) (*http.Response, error) {
@@ -17,11 +16,6 @@ func Got(method string, url string, body io.Reader, cookies []*http.Cookie) (*ht
 	for _, cookie := range cookies {
 		req.AddCookie(cookie)
 	}
-	req.AddCookie(&http.Cookie{
-		Name:   "neologin",
-		Value:  os.Getenv("NEOPETS_LOGIN"),
-		Domain: ".neopets.com",
-	})
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println("http get error", err)
