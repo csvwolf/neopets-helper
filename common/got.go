@@ -10,8 +10,14 @@ import (
 
 func Got(method string, url string, body io.Reader, cookies []*http.Cookie) (*http.Response, error) {
 	client := &http.Client{}
-	req, _ := http.NewRequest(method, url, body)
-	// 自定义Header
+	req, err := http.NewRequest(method, url, body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// 自定义 Header
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36")
 	for _, cookie := range cookies {
 		req.AddCookie(cookie)

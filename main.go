@@ -14,6 +14,8 @@ func StartServer() {
 	server.Use(middlewares.Json)
 	server.Get("/price", controllers.PriceWizard)
 	server.Post("/daily/grundo", daily.MagicBlueGrundo)
+	server.Post("/daily/shop-of-offer", daily.ShopOfOffer)
+	server.Post("/daily/trudys-surprise", daily.TrudysSurprise)
 	server.Start(nil)
 }
 
