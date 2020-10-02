@@ -17,7 +17,6 @@ func MagicBlueGrundo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	gift, err := services.GetMagicBlueGrundoGift(body.Session)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -26,14 +25,12 @@ func MagicBlueGrundo(w http.ResponseWriter, r *http.Request) {
 	value, err := json.Marshal(services.BlueGrundoGift{
 		Gift: gift,
 	})
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	_, err = w.Write(value)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
