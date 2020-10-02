@@ -3,6 +3,7 @@ package services
 import (
 	"log"
 	"neopets/common"
+	"neopets/utils"
 	"net/http"
 	"strings"
 
@@ -20,11 +21,7 @@ Once a day to get magic blue grundo's gift
 */
 func GetMagicBlueGrundoGift(session string) (string, error) {
 	res, err := common.Got("POST", GrundoGift, strings.NewReader("talkto=1"), []*http.Cookie{
-		{
-			Name:   "neologin",
-			Value:  session,
-			Domain: ".neopets.com",
-		},
+		utils.NeopetsSession(session),
 	})
 	if err != nil {
 		return "", err
@@ -36,8 +33,6 @@ func GetMagicBlueGrundoGift(session string) (string, error) {
 		return "", err
 	}
 	text := strings.TrimSpace(doc.Find("#content > table > tbody > tr > td.content > div[align=center] > b").First().Text())
-
 	log.Print("Got " + text)
-
 	return text, nil
 }

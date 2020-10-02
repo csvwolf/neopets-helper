@@ -7,31 +7,20 @@ import (
 	"net/http"
 )
 
-/**
-TrudysSurprise API
-*/
-func TrudysSurprise(w http.ResponseWriter, r *http.Request) {
+func Tombola(w http.ResponseWriter, r *http.Request) {
 	var body types.NeopetsSession
 
 	err := json.NewDecoder(r.Body).Decode(&body)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	item, err := services.GetTrudysSurprise(body.Session)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	value, err := json.Marshal(item)
-	_, err = w.Write(value)
-
+	text, err := services.GetTombola(body.Session)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	_, err = w.Write([]byte(text))
 }

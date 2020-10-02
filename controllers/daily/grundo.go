@@ -7,6 +7,9 @@ import (
 	"net/http"
 )
 
+/**
+MagincBlueGrundo API
+*/
 func MagicBlueGrundo(w http.ResponseWriter, r *http.Request) {
 	var body types.NeopetsSession
 
