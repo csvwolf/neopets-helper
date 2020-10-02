@@ -6,6 +6,9 @@ import (
 	"net/http"
 )
 
+/**
+PriceWizard to compare prize
+*/
 func PriceWizard(w http.ResponseWriter, r *http.Request) {
 	item := r.URL.Query().Get("item")
 	price := services.QuickGetPrice(item)

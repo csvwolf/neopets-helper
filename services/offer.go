@@ -2,6 +2,7 @@ package services
 
 import (
 	"neopets/common"
+	"neopets/utils"
 	"net/http"
 	"regexp"
 	"strings"
@@ -20,11 +21,7 @@ Rich Slorg: Get 100 NP or 50 NP a day
 */
 func GetShopOfOffer(session string) (string, error) {
 	res, err := common.Got("GET", ShopOfOffer, nil, []*http.Cookie{
-		{
-			Name:   "neologin",
-			Value:  session,
-			Domain: ".neopets.com",
-		},
+		utils.NeopetsSession(session),
 	})
 	if err != nil {
 		return "", err

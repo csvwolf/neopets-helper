@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"neopets/common"
+	"neopets/utils"
 	"net/http"
 	"net/url"
 	"strings"
@@ -26,15 +27,14 @@ type SurpriseItem struct {
 	Error      string          `json:"error"`
 }
 
+/**
+GetTrudysSurprise EveryDay
+*/
 func GetTrudysSurprise(session string) (*SurpriseItem, error) {
 	data := url.Values{}
 	data.Set("action", TrudysSurpriseAction)
 	res, err := common.Got(http.MethodPost, TrudysSurpriseURL, strings.NewReader(data.Encode()), []*http.Cookie{
-		{
-			Name:   "neologin",
-			Value:  session,
-			Domain: ".neopets.com",
-		},
+		utils.NeopetsSession(session),
 	})
 
 	if err != nil {
