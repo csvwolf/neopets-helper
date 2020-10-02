@@ -1,7 +1,6 @@
 package services
 
 import (
-	"log"
 	"neopets/common"
 	"net/http"
 	"regexp"
@@ -19,7 +18,7 @@ type OfferNp struct {
 /**
 Rich Slorg: Get 100 NP or 50 NP a day
 */
-func GetShopOfOffer(session string, resultChan chan string, errorChan chan error) {
+func GetShopOfOffer(session string) (string, error) {
 	res, err := common.Got("GET", ShopOfOffer, nil, []*http.Cookie{
 		{
 			Name:   "neologin",
@@ -28,19 +27,17 @@ func GetShopOfOffer(session string, resultChan chan string, errorChan chan error
 		},
 	})
 	if err != nil {
-		errorChan <- err
-		return
+		return "", err
 	}
 	defer res.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		errorChan <- err
-		return
+		return "", err
 	}
 	text := strings.TrimSpace(doc.Find("#content > table > tbody > tr > td.content > table > tbody").First().Text())
 	re := regexp.MustCompile(`\d+ Neopoints`)
 	np := string(re.Find([]byte(text)))
-	resultChan <- np
-	log.Print("Got " + np)
+
+	return np, nil
 }

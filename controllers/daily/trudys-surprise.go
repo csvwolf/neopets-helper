@@ -10,9 +10,6 @@ import (
 func TrudysSurprise(w http.ResponseWriter, r *http.Request) {
 	var body types.NeopetsSession
 
-	resultChan := make(chan services.SurpriseItem)
-	errorChan := make(chan error)
-
 	err := json.NewDecoder(r.Body).Decode(&body)
 
 	if err != nil {
@@ -20,24 +17,18 @@ func TrudysSurprise(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go services.GetTrudysSurprise(body.Session, resultChan, errorChan)
+	item, err := services.GetTrudysSurprise(body.Session)
 
-	select {
-	case item := <-resultChan:
-		value, err := json.Marshal(item)
-
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		_, err = w.Write(value)
-
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	case err := <-errorChan:
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	value, err := json.Marshal(item)
+	_, err = w.Write(value)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
