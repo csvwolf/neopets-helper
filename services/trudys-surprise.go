@@ -2,7 +2,6 @@ package services
 
 import (
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"neopets/common"
 	"net/http"
@@ -27,7 +26,7 @@ type SurpriseItem struct {
 	Error      string          `json:"error"`
 }
 
-func GetTrudysSurprise(session string, resultChan chan SurpriseItem, errorChan chan error) {
+func GetTrudysSurprise(session string) (*SurpriseItem, error) {
 	data := url.Values{}
 	data.Set("action", TrudysSurpriseAction)
 	res, err := common.Got(http.MethodPost, TrudysSurpriseURL, strings.NewReader(data.Encode()), []*http.Cookie{
@@ -39,27 +38,23 @@ func GetTrudysSurprise(session string, resultChan chan SurpriseItem, errorChan c
 	})
 
 	if err != nil {
-		errorChan <- err
-		return
+		return nil, err
 	}
 
 	defer res.Body.Close()
 	bodyBytes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		errorChan <- err
-		return
+		return nil, err
 	}
 
 	var item SurpriseItem
 	if err := json.Unmarshal(bodyBytes, &item); err != nil {
-		errorChan <- err
-		return
+		return nil, err
 	}
 
 	if item.Error != "" {
-		errorChan <- errors.New(item.Error)
-		return
+		return nil, err
 	}
 
-	resultChan <- item
+	return &item, nil
 }

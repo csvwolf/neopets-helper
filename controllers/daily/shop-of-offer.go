@@ -10,8 +10,6 @@ import (
 func ShopOfOffer(w http.ResponseWriter, r *http.Request) {
 	var body types.NeopetsSession
 
-	offerChan := make(chan string)
-	errorChan := make(chan error)
 	err := json.NewDecoder(r.Body).Decode(&body)
 
 	if err != nil {
@@ -19,24 +17,18 @@ func ShopOfOffer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go services.GetShopOfOffer(body.Session, offerChan, errorChan)
+	np, err := services.GetShopOfOffer(body.Session)
 
-	select {
-	case np := <-offerChan:
-		value, err := json.Marshal(services.OfferNp{Np: np})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		_, err = w.Write(value)
+	value, err := json.Marshal(services.OfferNp{Np: np})
 
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	case err := <-errorChan:
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	_, err = w.Write(value)
 }
