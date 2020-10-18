@@ -6,13 +6,11 @@ import (
 )
 
 /**
-Json Middleware
+Log Middleware
 */
-func Json(handler http.HandlerFunc) http.HandlerFunc {
+func Log(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Request: %v", r.URL)
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
 		handler.ServeHTTP(w, r)
 	}
 }
