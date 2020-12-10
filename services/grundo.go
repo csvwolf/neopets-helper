@@ -13,26 +13,33 @@ import (
 const GrundoGift = "http://www.neopets.com/faerieland/tdmbgpop.phtml"
 
 type BlueGrundoGift struct {
-	Gift string `json:"gift"`
+	Gift  string `json:"gift"`
+	Error string `json:"error"`
 }
 
 /**
 Once a day to get magic blue grundo's gift
 */
-func GetMagicBlueGrundoGift(session string) (string, error) {
+func GetMagicBlueGrundoGift(session string) (grundo *BlueGrundoGift, err error) {
 	res, err := common.Got("POST", GrundoGift, strings.NewReader("talkto=1"), []*http.Cookie{
 		utils.NeopetsSession(session),
 	})
 	if err != nil {
-		return "", err
+		return
 	}
 	defer res.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		return "", err
+		return
 	}
+	if !utils.CheckSessionInPage(doc.Find("body").Text()) {
+		grundo = &BlueGrundoGift{Error: "Session expired"}
+		return
+	}
+
 	text := strings.TrimSpace(doc.Find("#content > table > tbody > tr > td.content > div[align=center] > b").First().Text())
 	log.Print("Got " + text)
-	return text, nil
+	grundo = &BlueGrundoGift{Gift: text}
+	return
 }
