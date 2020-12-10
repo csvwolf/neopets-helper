@@ -19,20 +19,20 @@ func MagicBlueGrundo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	gift, err := services.GetMagicBlueGrundoGift(body.Session)
+	grundo, err := services.GetMagicBlueGrundoGift(body.Session)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	value, err := json.Marshal(services.BlueGrundoGift{
-		Gift: gift,
-	})
+	value, err := json.Marshal(grundo)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	if grundo.Error != "" {
+		w.WriteHeader(http.StatusBadRequest)
+	}
 	_, err = w.Write(value)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

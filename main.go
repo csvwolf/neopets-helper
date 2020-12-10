@@ -12,6 +12,7 @@ const NeoPriceDb = 1
 func StartServer() {
 	server := common.WebServer{Host: "", Port: 8090}
 	// middleware bind
+	server.Use(middlewares.Cors)
 	server.Use(middlewares.Log)
 	server.Use(middlewares.Json)
 	// wizard api
